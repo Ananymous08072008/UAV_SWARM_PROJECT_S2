@@ -5,8 +5,8 @@ How to work on this repository. Please read this before your first change.
 ## One-time setup
 
 ```bash
-git clone https://github.com/Ananymous08072008/UAV_SWARM_PROJECT_S1.git
-cd UAV_SWARM_PROJECT_S1
+git clone https://github.com/Ananymous08072008/UAV_SWARM_PROJECT_S2.git
+cd UAV_SWARM_PROJECT_S2
 
 python -m venv .venv
 .venv\Scripts\activate          # Windows;  source .venv/bin/activate on Linux/macOS

@@ -1,6 +1,6 @@
-# Resilient UAV Swarm - simulation-first platform
+# Resilient UAV Swarm - simulation-first platform (Stage 2)
 
-[![tests](https://github.com/Ananymous08072008/UAV_SWARM_PROJECT_S1/actions/workflows/tests.yml/badge.svg)](https://github.com/Ananymous08072008/UAV_SWARM_PROJECT_S1/actions/workflows/tests.yml)
+[![tests](https://github.com/Ananymous08072008/UAV_SWARM_PROJECT_S2/actions/workflows/tests.yml/badge.svg)](https://github.com/Ananymous08072008/UAV_SWARM_PROJECT_S2/actions/workflows/tests.yml)
 [![Python 3.10+](https://img.shields.io/badge/python-3.10%2B-blue.svg)](https://www.python.org/downloads/)
 [![License: MIT](https://img.shields.io/badge/license-MIT-green.svg)](LICENSE)
 
@@ -14,9 +14,15 @@ limited flight time survey Points of Interest (PoIs) inside it, collect imagery,
 to the GCS over a multi-hop aerial network. The swarm has to keep that link alive while radios
 degrade, obstacles appear, UAVs fail or leave to recharge, and new high-priority regions emerge.
 
+> **Stage 2 - Technical Challenge** (PUSHPAK Grand Challenge 2026, UAV-X: Resilient BVLOS Swarm).
+> Work time 3 Oct - 2 Dec 2026. Plan, deliverables and reproducibility steps: [docs/stage2.md](docs/stage2.md).
+> Changes per release: [CHANGELOG.md](CHANGELOG.md). The Stage 1 submission is preserved at tag `stage1-baseline`.
+
 ## Install
 
 ```bash
+git clone https://github.com/Ananymous08072008/UAV_SWARM_PROJECT_S2.git
+cd UAV_SWARM_PROJECT_S2
 python -m venv .venv
 .venv\Scripts\activate          # Windows;  source .venv/bin/activate on Linux/macOS
 pip install -r requirements.txt
@@ -32,7 +38,7 @@ python main.py                     # headless full-demo scenario, prints events 
 python main.py --demo              # dashboard + MAVLink + real time (what to record for the video)
 python main.py --dashboard --realtime --speed 4
 python main.py --scenario scenarios/network_degradation.yaml --mode baseline
-python -m pytest -q                # 200 tests
+python -m pytest -q                # full suite (262 tests)
 ```
 
 The default demo follows the mission constraints: a 45-minute mission over a 1000 x 1000 m area
