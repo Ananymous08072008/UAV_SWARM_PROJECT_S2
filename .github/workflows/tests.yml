@@ -1,5 +1,5 @@
-# Runs the test suite automatically on GitHub's servers for every push and
-# pull request, so nobody can merge a change that breaks main.
+# Runs the test suite and a full headless mission on GitHub's servers for every
+# push and pull request, so nobody can merge a change that breaks main.
 name: tests
 
 on:
@@ -7,10 +7,19 @@ on:
     branches: [main]
   pull_request:
     branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: tests-${{ github.ref }}
+  cancel-in-progress: true
 
 jobs:
   pytest:
     runs-on: ubuntu-latest
+    timeout-minutes: 25
     strategy:
       fail-fast: false
       matrix:
@@ -36,7 +45,9 @@ jobs:
           MPLBACKEND: Agg      # matplotlib has no display on a CI runner
         run: python -m pytest -q
 
-      - name: Smoke-test a headless simulation run
+      - name: Smoke-test a full headless mission (adaptive and baseline)
         env:
           MPLBACKEND: Agg
-        run: python main.py --duration 30 --realtime --speed 30 --quiet --no-results
+        run: |
+          python main.py --quiet --no-results
+          python main.py --mode baseline --quiet --no-results

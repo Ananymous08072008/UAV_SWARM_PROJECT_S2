@@ -1,0 +1,23 @@
+name: Feature or task
+description: A Stage 2 improvement, experiment or documentation task
+labels: [enhancement]
+body:
+  - type: textarea
+    id: problem
+    attributes:
+      label: Problem or goal
+      description: Which evaluation criterion or hidden-disturbance case does this help?
+    validations:
+      required: true
+  - type: textarea
+    id: proposal
+    attributes:
+      label: Proposed change
+    validations:
+      required: true
+  - type: textarea
+    id: done
+    attributes:
+      label: Done when
+      description: Measurable acceptance criteria (a metric, a passing test, a scenario outcome).
+      placeholder: "- [ ] ...\n- [ ] ..."
