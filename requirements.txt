@@ -3,7 +3,7 @@ numpy>=1.24
 PyYAML>=6.0
 
 # MAVLink telemetry to Mission Planner (telemetry/)
-pymavlink>=2.4.41
+pymavlink>=2.4.50
 
 # Live dashboard (dashboard/)
 fastapi>=0.110
