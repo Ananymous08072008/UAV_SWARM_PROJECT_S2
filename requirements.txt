@@ -14,5 +14,5 @@ openpyxl>=3.1          # "Download data": mission metrics + event log as .xlsx
 matplotlib>=3.7
 
 # Tests
-pytest>=7.0
+pytest>=9.1.1
 httpx>=0.27            # required by fastapi.testclient
