@@ -10,9 +10,10 @@ LEVEL 0 bench hardware -> 1 one flying UAV -> 2 + camera -> 3 + companion comput
 
 Levels 0 to 4 are implemented and each one runs with a single command. Each run ends with a
 PASS/FAIL verdict from an independent referee that uses Gazebo ground truth.
-The fast Python simulator in the repository root stays the place for 100-seed sweeps. This stack
-is the realistic check: real ArduPilot firmware, lock-step physics and sensors, and the same radio
-model and mission constraints.
+The fast Stage 1 Python simulator (its own repo,
+[UAV_SWARM_PROJECT_S1](https://github.com/Ananymous08072008/UAV_SWARM_PROJECT_S1)) stays the place
+for 100-seed sweeps. This stack is the realistic check: real ArduPilot firmware, lock-step physics
+and sensors, and the same radio model and mission constraints.
 
 ### Measured on this laptop (2026-10-13)
 
@@ -47,7 +48,7 @@ re-run machine (16 cores, 128 GB, Ubuntu) is faster.
 | Fake sensors in ROS 2 | **mesh radio** (`radio_net`), **20-minute battery** (on the companion), PoI field reports (`scenario_manager`) |
 | Autopilot link | ArduPilot's native ROS 2 interface (XRCE-DDS, one micro-ROS agent): `/ap/v<SYSID>/...` topics and services; GUIDED-mode position goals |
 | Mission constraints | 5 m/s (`WP_SPD`), 100 m ceiling + 1.6 km fence (ArduPilot); 20 min endurance, 20 m separation, 10 s report deadline (companion / GCS / referee) |
-| Radio model | Same equations and numbers as the Python simulator (`config/parameters.yaml` `communication:`): log-distance path loss, logistic PDR, 85 % PDR at 100 m and nothing beyond, plus injected outage, packet loss and jamming |
+| Radio model | Same equations and numbers as the Stage 1 Python simulator's `communication:` parameters (kept here in `src/uavx_swarm/config/radio.yaml`): log-distance path loss, logistic PDR, 85 % PDR at 100 m and nothing beyond, plus injected outage, packet loss and jamming |
 
 ```
              Gazebo Harmonic (lock-step physics, sensors, uavx_disaster world)
@@ -277,7 +278,8 @@ that UAV. In Level 4 the other UAV is often within range of both of them (uav2 a
 from uav1 at P3) but cannot forward. Level 5 turns that UAV into a relay.
 
 **What to build.** Each piece reuses an algorithm that is already written and tested in the
-Python simulator:
+Stage 1 Python simulator (the [UAV_SWARM_PROJECT_S1](https://github.com/Ananymous08072008/UAV_SWARM_PROJECT_S1)
+repo — the `swarm/*.py` modules named below are there, to port into this ROS 2 stack):
 
 1. **Forwarding in the radio stack** (`radio_endpoint.py`, `RadioPacket.msg`). Add `final_dst`
    and `ttl` fields. `dst` becomes the link-level next hop, and a node re-sends a frame that is
@@ -308,7 +310,7 @@ GCS connectivity is at least 0.95 while it is out of direct range. The recovery 
 relay outage is measured. Separation stays at least 20 m, with the relay on the 45 m layer and the
 surveyor at 25 m.
 
-After that: **Level 6** extends the chain to three UAVs (a PoI 250 m out needs two relays,
-`relay_selector` already plans chains). **Level 7** adds imagery traffic, the 3 Mbit/s camera
-stream from `data:` in `config/parameters.yaml`, so link capacity matters. **Level 8** adds
-relay failure and hand-over (`swarm/reconfiguration.py`, `energy_manager.py`).
+After that: **Level 6** extends the chain to three UAVs (a PoI 250 m out needs two relays; the
+Stage 1 `relay_selector` already plans chains). **Level 7** adds imagery traffic — a 3 Mbit/s
+camera stream — so link capacity matters. **Level 8** adds relay failure and hand-over (Stage 1
+`reconfiguration.py` / `energy_manager.py`).
