@@ -1,0 +1,22 @@
+<?xml version="1.0"?>
+<?xml-model href="http://download.ros.org/schema/package_format3.xsd" schematypens="http://www.w3.org/2001/XMLSchema"?>
+<package format="3">
+  <name>uavx_gazebo</name>
+  <version>0.1.0</version>
+  <description>
+    UAV-X Stage 2: Gazebo Harmonic model of the uavx_quad survey drone (IMU, GPS,
+    barometer, magnetometer, nadir camera, downward rangefinder), the disaster-site
+    world and the ArduPilot SITL parameters that encode the mission constraints.
+  </description>
+  <maintainer email="uavx@users.noreply.github.com">UAV-X team</maintainer>
+  <license>MIT</license>
+
+  <buildtool_depend>ament_cmake</buildtool_depend>
+
+  <exec_depend>ardupilot_gazebo</exec_depend>
+  <exec_depend>ardupilot_sitl</exec_depend>
+
+  <export>
+    <build_type>ament_cmake</build_type>
+  </export>
+</package>

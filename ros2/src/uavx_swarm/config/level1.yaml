@@ -1,0 +1,31 @@
+# LEVEL 1 - one flying UAV
+# uav1 takes off from pad 1, flies four waypoints at three different heights near the
+# GCS, comes back and lands on its pad. The companion computer flies the plan on its
+# own through ArduPilot's ROS 2 interface (GUIDED); the referee checks the mission
+# constraints against Gazebo ground truth.
+level: 1
+name: one_uav_flight
+description: >
+  Autonomous take-off, 4-waypoint circuit (25-40 m), return and precision landing on
+  the pad, under the 5 m/s / 100 m / geofence limits.
+duration_s: 420
+uavs:
+  - id: uav1
+    pad_m: [-25.0, -12.5]
+    cruise_alt_m: 30.0
+    color: [0.1, 0.6, 1.0]
+components: [companion, mission_monitor]
+mission:
+  mode: local
+  hover_s: 2.0
+  waypoints_m:            # [east, north, height above pad]
+    - [60.0, -30.0, 30.0]
+    - [60.0, 30.0, 40.0]
+    - [0.0, 45.0, 30.0]
+    - [-40.0, 0.0, 25.0]
+pass:
+  all_landed: true
+  waypoints_reached: 4
+  pad_error_m: 2.0
+  max_speed_mps: 5.5        # 5 m/s limit + 10 % for overshoot in the truth signal
+  max_alt_m: 100.0

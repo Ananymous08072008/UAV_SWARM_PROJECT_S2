@@ -1,0 +1,75 @@
+# 3-D MISSION WITH HIDDEN DISTURBANCES - the Level 4 swarm in an earthquake-damaged town
+#
+#   bash ros2/run_level.sh demo3d [--gui] [--seed N]
+#
+# Map: quake_town (uavx_gazebo/maps/quake_town.yaml) - buildings 18-55 m, a 60 m mast, two
+# collapsed blocks and a landslide ridge. Every UAV plans around the obstacles at its own
+# flight level, and buildings shadow the radio (20 dB through concrete).
+#
+# Three UAVs on the 25 / 45 / 65 m levels (20 m vertical separation) survey five PoIs.
+# What else happens is HIDDEN: only the types, time windows and value ranges below are
+# fixed. The concrete plan - when, how strong, which UAV, where new emergency PoIs appear -
+# is drawn from the run seed at t = 0 (printed, saved to hidden_plan.json for the audit,
+# reproducible with --seed N) and never shown to the swarm: it meets each one as it fires.
+level: 4
+name: hidden_disturbance_3d
+description: >
+  Three-UAV survey of a 3-D earthquake-damaged town with randomly drawn hidden disturbances:
+  a UAV failure, a low battery, a radio outage, packet loss, jamming and two emergency PoIs.
+map: quake_town
+seed: random
+duration_s: 1500
+uavs:
+  - id: uav1
+    pad_m: [-25.0, -12.5]
+    cruise_alt_m: 25.0
+    color: [0.1, 0.6, 1.0]
+    companion: {hold_m: [30.0, -20.0]}
+  - id: uav2
+    pad_m: [-25.0, 12.5]
+    cruise_alt_m: 45.0
+    color: [1.0, 0.55, 0.0]
+    companion: {hold_m: [30.0, 20.0]}
+  - id: uav3
+    pad_m: [-25.0, -37.5]
+    cruise_alt_m: 65.0
+    color: [0.2, 0.8, 0.3]
+    companion: {hold_m: [35.0, 0.0]}
+components: [companion, poi_detector, radio_net, gcs, scenario_manager, mission_monitor]
+mission:
+  mode: gcs
+companion:
+  survey_s: 15.0
+  obstacle_clearance_m: 10.0
+gcs_logic:
+  fail_timeout_s: 10.0
+  poi_window_s: 170.0         # hidden PoIs can appear until mission t = 150 s
+  mission_time_s: 1000.0
+pois:                         # the ones the organisers announce; more are hidden below
+  - {id: P1, pos_m: [82.0, -22.0], reported_m: [77.0, -17.0], priority: 2, survey_s: 15.0, appear_s: 0.0}
+  - {id: P2, pos_m: [78.0, 52.0], reported_m: [84.0, 47.0], priority: 2, survey_s: 15.0, appear_s: 0.0}
+  - {id: P3, pos_m: [140.0, 0.0], reported_m: [135.0, 6.0], priority: 3, survey_s: 15.0, appear_s: 0.0}
+  - {id: P4, pos_m: [175.0, -70.0], reported_m: [170.0, -64.0], priority: 3, survey_s: 15.0, appear_s: 20.0}
+  - {id: P5, pos_m: [200.0, 60.0], reported_m: [195.0, 66.0], priority: 4, survey_s: 15.0, appear_s: 40.0}
+hidden_disturbances:          # [a, b] = drawn uniformly per run
+  - {type: uav_failure, window_s: [70.0, 150.0], target: busy}
+  - {type: battery,     window_s: [100.0, 180.0], target: random_airborne, pct: [19.0, 21.0]}
+  - {type: comm_outage, window_s: [40.0, 160.0], target: random_airborne, duration_s: [5.0, 8.0]}
+  - {type: packet_loss, window_s: [30.0, 150.0], target: "*", loss: [0.2, 0.4], duration_s: [20.0, 40.0]}
+  - {type: jamming,     window_s: [40.0, 160.0], center_m: near_pending_poi, radius_m: [30.0, 50.0],
+     attenuation_db: [20.0, 30.0], duration_s: [30.0, 60.0]}
+  - {type: new_poi,     window_s: [30.0, 150.0], count: 2, region_m: [80.0, -100.0, 220.0, 100.0],
+     priority: [4, 5], survey_s: 15.0}
+pass:
+  all_landed: true
+  allow_failure_of: injected
+  pad_error_m: 2.5
+  max_speed_mps: 5.5
+  max_alt_m: 100.0
+  min_separation_m: 20.0
+  pois_completed: all         # the five announced + every hidden emergency PoI
+  pois_detected: all
+  geolocation_error_m: 3.5
+  reports_at_gcs: all
+  live_report_latency_s: 10.0 # a find made while in GCS contact reaches the GCS within 10 s
+  disturbances_handled: true

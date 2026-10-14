@@ -51,6 +51,15 @@ python experiments/plot_results.py                   # figures next to the CSV
 
 Every run writes its own folder under `results/`; the same `--seed` reproduces the same run.
 
+## High-fidelity stack: Gazebo + ArduPilot + ROS 2
+
+`ros2/` holds the same mission on real ArduPilot SITL, Gazebo Harmonic and ROS 2 Humble. It is
+built up level by level (0 bench, 1 flight, 2 camera, 3 companion computer, 4 two UAVs +
+communication), plus a 3-D town map with hidden disturbances (`demo3d`). Each level runs with
+`bash ros2/run_level.sh <level>` and ends with a referee verdict. Setup, results and the
+Level 5 (relay) design are in [ros2/README.md](../ros2/README.md). The radio model and the
+mission constraints are the same as here.
+
 ## Working plan
 
 - [ ] Add hidden-disturbance scenarios (UAV failure bursts, comm outage windows, packet-loss spikes, mid-mission emergency PoIs)

@@ -1,0 +1,45 @@
+# ros_gz_bridge config for one uavx_quad (topics land under the UAV namespace, /uavN/...).
+# {{ world_name }} and {{ robot_name }} are filled in by ardupilot_gz_bringup robot.launch.py.
+# The 1 kHz IMU is deliberately not bridged: ArduPilot reads it inside Gazebo, and
+# ROS 2 gets the autopilot's estimate from /ap/v<SYSID>/... instead.
+---
+# ground truth (referee + radio channel model only - never used by the autonomy)
+- ros_topic_name: "odometry"
+  gz_topic_name: "/model/{{ robot_name }}/odometry"
+  ros_type_name: "nav_msgs/msg/Odometry"
+  gz_type_name: "gz.msgs.Odometry"
+  direction: GZ_TO_ROS
+
+# payload
+- ros_topic_name: "camera/image"
+  gz_topic_name: "/world/{{ world_name }}/model/{{ robot_name }}/link/camera_link/sensor/survey_camera/image"
+  ros_type_name: "sensor_msgs/msg/Image"
+  gz_type_name: "gz.msgs.Image"
+  direction: GZ_TO_ROS
+- ros_topic_name: "camera/camera_info"
+  gz_topic_name: "/world/{{ world_name }}/model/{{ robot_name }}/link/camera_link/sensor/survey_camera/camera_info"
+  ros_type_name: "sensor_msgs/msg/CameraInfo"
+  gz_type_name: "gz.msgs.CameraInfo"
+  direction: GZ_TO_ROS
+- ros_topic_name: "rangefinder"
+  gz_topic_name: "/world/{{ world_name }}/model/{{ robot_name }}/link/rangefinder_link/sensor/rangefinder/scan"
+  ros_type_name: "sensor_msgs/msg/LaserScan"
+  gz_type_name: "gz.msgs.LaserScan"
+  direction: GZ_TO_ROS
+
+# navigation sensors (raw, as a companion computer would read them)
+- ros_topic_name: "navsat"
+  gz_topic_name: "/world/{{ world_name }}/model/{{ robot_name }}/link/base_link/sensor/navsat_sensor/navsat"
+  ros_type_name: "sensor_msgs/msg/NavSatFix"
+  gz_type_name: "gz.msgs.NavSat"
+  direction: GZ_TO_ROS
+- ros_topic_name: "magnetometer"
+  gz_topic_name: "/world/{{ world_name }}/model/{{ robot_name }}/link/base_link/sensor/magnetometer_sensor/magnetometer"
+  ros_type_name: "sensor_msgs/msg/MagneticField"
+  gz_type_name: "gz.msgs.Magnetometer"
+  direction: GZ_TO_ROS
+- ros_topic_name: "air_pressure"
+  gz_topic_name: "/world/{{ world_name }}/model/{{ robot_name }}/link/base_link/sensor/air_pressure_sensor/air_pressure"
+  ros_type_name: "sensor_msgs/msg/FluidPressure"
+  gz_type_name: "gz.msgs.FluidPressure"
+  direction: GZ_TO_ROS

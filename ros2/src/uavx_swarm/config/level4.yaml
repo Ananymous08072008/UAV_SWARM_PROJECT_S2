@@ -1,0 +1,58 @@
+# LEVEL 4 - two UAVs + communication
+# Two UAVs on separate flight levels (25 m / 45 m: 20 m vertical separation) share three
+# PoIs through the GCS. The timeline injects the Stage 2 disturbance types:
+#   t=35  packet loss 50 % on uav2's links for 30 s     -> ARQ keeps reports flowing
+#   t=75  6 s radio outage on uav2                      -> GCS must NOT declare it lost
+#   t=90  emergency PoI E1 (priority 5) appears         -> allocated at the head of a queue
+#   t=100 motor failure of whichever UAV owns E1 (it falls) -> GCS detects the silence and
+#                                                          re-allocates its unfinished PoIs
+# P3 is 150 m out (beyond the 100 m range): store-and-forward, as in Level 3.
+level: 4
+name: two_uavs_communication
+description: >
+  Two UAVs, GCS task allocation over the mesh radio, peer status exchange, packet loss,
+  a short outage ridden through, an emergency PoI and a UAV failure with re-allocation.
+duration_s: 720
+uavs:
+  - id: uav1
+    pad_m: [-25.0, -12.5]
+    cruise_alt_m: 25.0
+    color: [0.1, 0.6, 1.0]
+    companion: {hold_m: [30.0, -20.0]}
+  - id: uav2
+    pad_m: [-25.0, 12.5]
+    cruise_alt_m: 45.0
+    color: [1.0, 0.55, 0.0]
+    companion: {hold_m: [30.0, 20.0]}
+components: [companion, poi_detector, radio_net, gcs, scenario_manager, mission_monitor]
+mission:
+  mode: gcs
+companion:
+  survey_s: 15.0
+gcs_logic:
+  fail_timeout_s: 10.0        # silence (in good coverage) before a UAV is declared lost
+  poi_window_s: 100.0         # new PoIs may appear until mission t = 100 s
+pois:
+  - {id: P1, pos_m: [80.0, -25.0], reported_m: [74.0, -20.0], priority: 2, survey_s: 15.0, appear_s: 0.0}
+  - {id: P2, pos_m: [78.0, 35.0], reported_m: [84.0, 30.0], priority: 2, survey_s: 15.0, appear_s: 0.0}
+  - {id: P3, pos_m: [150.0, -10.0], reported_m: [146.0, -4.0], priority: 3, survey_s: 15.0, appear_s: 0.0}
+  - {id: E1, pos_m: [75.0, 45.0], reported_m: [71.0, 49.0], priority: 5, survey_s: 15.0, appear_s: 90.0}
+disturbances:
+  - {at_s: 35.0, type: packet_loss, target: uav2, loss: 0.5, duration_s: 30.0}
+  - {at_s: 75.0, type: comm_outage, target: uav2, duration_s: 6.0}
+  - {at_s: 100.0, type: uav_failure, target: "owner:E1"}   # resolved when it fires
+pass:
+  all_landed: true
+  allow_failure_of: injected  # only the UAV the failure actually hit may end FAILED
+  pad_error_m: 2.0
+  max_speed_mps: 5.5
+  min_separation_m: 20.0
+  pois_completed: all
+  emergency_poi: E1
+  reports_at_gcs: all
+  report_latency_s: 10.0
+  ferry_pois: [P3]
+  reallocations_min: 1
+  failure_detection_max_s: 15.0
+  max_lost_declarations: 1    # the 6 s outage must not be mistaken for a failure
+  status_pdr_min: 0.5

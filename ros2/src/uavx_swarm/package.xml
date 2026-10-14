@@ -1,0 +1,37 @@
+<?xml version="1.0"?>
+<?xml-model href="http://download.ros.org/schema/package_format3.xsd" schematypens="http://www.w3.org/2001/XMLSchema"?>
+<package format="3">
+  <name>uavx_swarm</name>
+  <version>0.1.0</version>
+  <description>
+    UAV-X Stage 2 swarm autonomy on ArduPilot SITL + Gazebo Harmonic + ROS 2:
+    bench check, onboard companion computer, PoI detector, emulated mesh radio,
+    GCS task allocation / re-allocation, scenario + disturbance manager and the
+    referee that scores each level.
+  </description>
+  <maintainer email="uavx@users.noreply.github.com">UAV-X team</maintainer>
+  <license>MIT</license>
+
+  <exec_depend>rclpy</exec_depend>
+  <exec_depend>std_msgs</exec_depend>
+  <exec_depend>std_srvs</exec_depend>
+  <exec_depend>geometry_msgs</exec_depend>
+  <exec_depend>nav_msgs</exec_depend>
+  <exec_depend>sensor_msgs</exec_depend>
+  <exec_depend>rcl_interfaces</exec_depend>
+  <exec_depend>rosgraph_msgs</exec_depend>
+  <exec_depend>ardupilot_msgs</exec_depend>
+  <exec_depend>ardupilot_gz_bringup</exec_depend>
+  <exec_depend>ros_gz_sim</exec_depend>
+  <exec_depend>ros_gz_bridge</exec_depend>
+  <exec_depend>topic_tools</exec_depend>
+  <exec_depend>uavx_interfaces</exec_depend>
+  <exec_depend>uavx_gazebo</exec_depend>
+  <exec_depend>python3-yaml</exec_depend>
+  <exec_depend>python3-numpy</exec_depend>
+  <exec_depend>python3-opencv</exec_depend>
+
+  <export>
+    <build_type>ament_python</build_type>
+  </export>
+</package>

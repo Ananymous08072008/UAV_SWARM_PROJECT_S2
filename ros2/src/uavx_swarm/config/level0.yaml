@@ -1,0 +1,14 @@
+# LEVEL 0 - bench hardware
+# One uavx_quad powered up on pad 1. Nothing flies: bench_check proves every sensor,
+# the autopilot configuration, the ROS 2 link, the motors and the arming path.
+level: 0
+name: bench_check
+description: >
+  Power-up test of one uavx_quad on its pad: sensor rates and values, ArduPilot
+  parameters, pre-arm, GPS/EKF frame alignment, MAVLink motor test, DDS arm/disarm.
+duration_s: 400
+uavs:
+  - id: uav1
+    pad_m: [-25.0, -12.5]
+    color: [0.1, 0.6, 1.0]
+components: [bench_check]

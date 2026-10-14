@@ -1,0 +1,30 @@
+# quake_town - 3-D map of an earthquake-damaged town east of the GCS.
+#
+# Frame: world ENU metres, origin at the GCS (as uavx_disaster.sdf / config/scenario.yaml).
+# Heights are above ground. Each obstacle is
+#   * spawned in Gazebo (collision + visual)      * avoided by the UAVs at their flight level
+#   * attenuating every radio path through it     * checked by the referee
+# Flight levels in the 3-D mission: 25 m, 45 m, 65 m. With the 10 m clearance an obstacle
+# blocks a level when it is taller than (level - 10 m): the 25 m level weaves between most
+# buildings, 45 m only meets B3/B5/T1, 65 m only the high-rise B5 and the mast T1.
+name: quake_town
+description: >
+  Earthquake-damaged town: standing offices and housing (18-55 m), two collapsed blocks,
+  a 60 m telecom mast, and a landslide ridge on the eastern edge.
+planner_cell_m: 4.0
+obstacles:
+  # standing buildings - concrete: 20 dB through a building
+  - {id: B1, kind: office,      center: [105, -55], size: [20, 16, 18], yaw_deg: 10,  attenuation_db: 20, color: [0.62, 0.6, 0.56]}
+  - {id: B2, kind: hospital,    center: [108, 38],  size: [18, 18, 34], yaw_deg: -8,  attenuation_db: 20, color: [0.78, 0.78, 0.74]}
+  - {id: B3, kind: tower_block, center: [165, 22],  size: [16, 14, 46], yaw_deg: 25,  attenuation_db: 22, color: [0.55, 0.57, 0.62]}
+  - {id: B4, kind: school,      center: [135, -38], size: [22, 14, 26], yaw_deg: -10, attenuation_db: 20, color: [0.7, 0.62, 0.5]}
+  - {id: B5, kind: high_rise,   center: [205, -25], size: [14, 14, 55], yaw_deg: 30,  attenuation_db: 24, color: [0.5, 0.52, 0.56]}
+  - {id: B6, kind: warehouse,   center: [178, 88],  size: [24, 16, 30], yaw_deg: 0,   attenuation_db: 18, color: [0.6, 0.55, 0.5]}
+  - {id: B7, kind: apartments,  center: [55, 22],   size: [10, 12, 24], yaw_deg: 5,   attenuation_db: 20, color: [0.66, 0.6, 0.55]}
+  # collapsed blocks - tilted rubble slabs (planned as their upright bounding box)
+  - {id: C1, kind: collapsed,   center: [125, 82],  size: [28, 12, 9],  yaw_deg: 20,  roll_deg: 12, attenuation_db: 12, color: [0.45, 0.42, 0.38]}
+  - {id: C2, kind: collapsed,   center: [228, -78], size: [30, 10, 7],  yaw_deg: -30, pitch_deg: 15, attenuation_db: 12, color: [0.42, 0.4, 0.36]}
+  # 60 m lattice telecom mast (knocked out by the quake) - light attenuation
+  - {id: T1, kind: mast, shape: cylinder, center: [60, -62], radius: 2.5, height: 60, attenuation_db: 4, color: [0.75, 0.75, 0.78]}
+  # landslide ridge on the eastern edge - earth blocks radio almost completely
+  - {id: R1, kind: landslide,   center: [255, 35],  size: [70, 26, 18], yaw_deg: 70,  roll_deg: 8, attenuation_db: 30, color: [0.46, 0.37, 0.27]}

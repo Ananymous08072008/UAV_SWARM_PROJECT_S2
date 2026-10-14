@@ -1,0 +1,42 @@
+# LEVEL 3 - one UAV + companion computer
+# The GCS now tasks the UAV over the emulated mesh radio (100 m range) and the companion
+# computer flies the mission on its own: it reports every PoI it finds (reliable, ACKed),
+# keeps a 1 Hz status/heartbeat, and handles a PoI beyond radio range by
+# store-and-forward: survey out of range, fly back towards the last good link, deliver.
+level: 3
+name: one_uav_companion
+description: >
+  GCS <-> companion over the mesh radio: tasking, PoI reports with ARQ, packet loss,
+  a PoI 150 m out (beyond the 100 m range) delivered by store-and-forward.
+duration_s: 600
+uavs:
+  - id: uav1
+    pad_m: [-25.0, -12.5]
+    cruise_alt_m: 25.0
+    color: [0.1, 0.6, 1.0]
+    companion: {hold_m: [30.0, -15.0]}
+components: [companion, poi_detector, radio_net, gcs, scenario_manager, mission_monitor]
+mission:
+  mode: gcs
+companion:
+  survey_s: 12.0
+gcs_logic:
+  fail_timeout_s: 10.0
+  poi_window_s: 40.0          # no new PoI is expected after mission t = 40 s
+pois:
+  - {id: P1, pos_m: [80.0, -25.0], reported_m: [74.0, -20.0], priority: 2, survey_s: 12.0, appear_s: 0.0}
+  - {id: P2, pos_m: [78.0, 35.0], reported_m: [84.0, 30.0], priority: 2, survey_s: 12.0, appear_s: 0.0}
+  - {id: P3, pos_m: [150.0, -10.0], reported_m: [146.0, -4.0], priority: 3, survey_s: 12.0, appear_s: 20.0}
+disturbances:
+  - {at_s: 25.0, type: packet_loss, target: uav1, loss: 0.4, duration_s: 30.0}
+pass:
+  all_landed: true
+  pad_error_m: 2.0
+  max_speed_mps: 5.5
+  pois_detected: all
+  pois_completed: all
+  geolocation_error_m: 2.5
+  reports_at_gcs: all
+  report_latency_s: 10.0      # PoI detected -> report at the GCS (organiser limit), in range
+  ferry_pois: [P3]            # beyond radio range: must arrive by store-and-forward
+  status_pdr_min: 0.5

@@ -1,0 +1,48 @@
+# UAV-X quad - ArduPilot SITL parameters, loaded after copter.parm.
+# Encodes the organiser mission constraints that the autopilot itself can enforce.
+# (Mission-level rules - 20 min endurance, 20 m separation, 10 s report deadline -
+#  live in the companion computer and the GCS: uavx_swarm.)
+
+# Iris X frame driven through the Gazebo ArduPilotPlugin
+FRAME_CLASS      1
+FRAME_TYPE       1
+MOT_PWM_MIN      1100
+MOT_PWM_MAX      1900
+
+# Max speed 5 m/s: waypoint/guided, loiter and RTL.
+# (ArduPilot master renamed the WPNAV_* centimetre parameters to metre ones, e.g.
+#  WPNAV_SPEED 500 cm/s -> WP_SPD 5 m/s. Unknown names in this file are ignored
+#  silently, so bench_check reads the values back.)
+WP_SPD           5
+WP_SPD_UP        2.5
+WP_SPD_DN        1.5
+WP_ACC           2.5
+LOIT_SPEED_MS    5
+RTL_SPEED_MS     5
+
+# Geofence: 100 m maximum height + 1.6 km circle around home (covers the
+# 1000 m x 1000 m operational area 75 m east of the GCS); breach -> RTL.
+FENCE_ENABLE     1
+FENCE_TYPE       3
+FENCE_ALT_MAX    100
+FENCE_RADIUS     1600
+FENCE_MARGIN     5
+FENCE_ACTION     1
+
+# Return to launch at 30 m, land on the pad
+RTL_ALT_M        30
+RTL_ALT_FINAL_M  0
+LAND_SPD_MS      0.6
+DISARM_DELAY     5
+
+# The companion computer owns the lost-GCS-link behaviour (store-and-forward,
+# return-to-comm); the autopilot's own GCS failsafe stays off.
+FS_GCS_ENABLE    0
+
+# Guided-mode velocity commands time out after 3 s without a refresh
+GUID_TIMEOUT     3
+
+# ROS 2 over XRCE-DDS (UDP to one shared micro-ROS agent), topics under /ap/v<SYSID>/
+DDS_ENABLE       1
+DDS_UDP_PORT     2019
+DDS_USE_NS       1

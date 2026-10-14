@@ -1,0 +1,34 @@
+# LEVEL 2 - one UAV + camera
+# Three PoIs (red 5 m targets) lie in the operational area. Their reported positions
+# are 5-8 m off (as a field report would be). uav1 flies to each reported position,
+# its nadir camera finds the real target, the detector geolocates it and saves imagery.
+level: 2
+name: one_uav_camera
+description: >
+  Survey of three PoIs from 30 m: camera detection, ground geolocation from pose +
+  rangefinder, imagery saved; error against the true target positions.
+duration_s: 480
+uavs:
+  - id: uav1
+    pad_m: [-25.0, -12.5]
+    cruise_alt_m: 30.0
+    color: [0.1, 0.6, 1.0]
+components: [companion, poi_detector, scenario_manager, mission_monitor]
+mission:
+  mode: local
+  survey_pois: true
+companion:
+  survey_s: 10.0
+pois:                       # pos_m = truth (where the target is); reported_m = what the UAV is told
+  - {id: P1, pos_m: [80.0, -25.0], reported_m: [74.0, -20.0], priority: 2, survey_s: 10.0}
+  - {id: P2, pos_m: [78.0, 35.0], reported_m: [84.0, 30.0], priority: 2, survey_s: 10.0}
+  - {id: P3, pos_m: [120.0, 5.0], reported_m: [115.0, 11.0], priority: 3, survey_s: 10.0}
+pass:
+  all_landed: true
+  pad_error_m: 2.0
+  max_speed_mps: 5.5
+  max_alt_m: 100.0
+  pois_detected: all
+  pois_completed: all
+  geolocation_error_m: 2.5
+  images_saved: 3

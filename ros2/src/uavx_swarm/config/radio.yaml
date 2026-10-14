@@ -1,0 +1,19 @@
+# Mesh-radio parameters for radio_net. These mirror config/parameters.yaml
+# `communication:` of the Python simulator one for one - change both together.
+# Healthy link: 85 % PDR at 100 m, no link at all beyond 100 m (organiser range).
+tx_power_dbm: 12.6
+uav_antenna_gain_dbi: 0.0
+gcs_antenna_gain_dbi: 0.0
+max_range_m: 100.0
+path_loss_ref_db: 40.0
+path_loss_exponent: 2.6
+noise_floor_dbm: -90.0
+snr_mid_db: 8.0
+snr_slope_db: 1.5
+fading_sigma_db: 1.0
+pdr_smoothing: 0.4
+link_up_pdr: 0.55
+link_down_pdr: 0.45
+hop_latency_ms: 5.0
+retx_latency_ms: 8.0
+update_interval_s: 0.5
